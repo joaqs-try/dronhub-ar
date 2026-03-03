@@ -149,26 +149,43 @@ function ProductCard({ p, onClick }) {
         <div style={{ fontFamily: "'Courier New', monospace", fontWeight: 700, fontSize: "0.78rem", color: "#e8f0f8", lineHeight: 1.35, flex: 1 }}>
           {p.name}
         </div>
-        <div style={{ marginTop: 8, display: "flex", justifyContent: "space-between", alignItems: "flex-end" }}>
-          <div>
-            {isOnSale && (p.sale_price_usd || p.price_usd) && (
-              <div style={{ fontFamily: "monospace", fontSize: "0.58rem", color: "#555", textDecoration: "line-through" }}>
-                {fmtUSD(p.price_usd || p.sale_price_usd)}
-              </div>
-            )}
-            {p.price_usd && (
-              <div style={{ fontFamily: "monospace", fontWeight: 900, fontSize: "1rem", color: "#00d4ff" }}>
-                {fmtUSD(isOnSale && p.sale_price_usd ? p.sale_price_usd : p.price_usd)}
-              </div>
-            )}
-            {p.price_ars && !p.price_usd && (
-              <div style={{ fontFamily: "monospace", fontWeight: 900, fontSize: "1rem", color: "#00ff88" }}>
-                {fmtARS(p.price_ars)}
-              </div>
-            )}
+        <div style={{ marginTop: 8 }}>
+          {/* Precio tachado si hay oferta */}
+          {isOnSale && (
+            <div style={{ fontFamily: "monospace", fontSize: "0.58rem", color: "#555", textDecoration: "line-through" }}>
+              {p.price_usd ? fmtUSD(p.price_usd) : fmtARS(p.price_ars)}
+            </div>
+          )}
+          {/* Precio principal */}
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end" }}>
+            <div>
+              {p.price_usd && (
+                <div style={{ fontFamily: "monospace", fontWeight: 900, fontSize: "1rem", color: "#00d4ff" }}>
+                  {fmtUSD(isOnSale && p.sale_price_usd ? p.sale_price_usd : p.price_usd)}
+                </div>
+              )}
+              {p.price_ars && !p.price_usd && (
+                <div style={{ fontFamily: "monospace", fontWeight: 900, fontSize: "1rem", color: "#00ff88" }}>
+                  {fmtARS(isOnSale && p.sale_price_ars ? p.sale_price_ars : p.price_ars)}
+                </div>
+              )}
+            </div>
+            <div style={{ fontFamily: "monospace", fontSize: "0.52rem", color: "#00d4ff", letterSpacing: 1 }}>
+              VER →
+            </div>
           </div>
-          <div style={{ fontFamily: "monospace", fontSize: "0.52rem", color: "#00d4ff", letterSpacing: 1 }}>
-            VER →
+          {/* Cuotas y envío gratis */}
+          <div style={{ display: "flex", gap: 6, marginTop: 5, flexWrap: "wrap" }}>
+            {p.installments > 1 && (
+              <span style={{ fontFamily: "monospace", fontSize: "0.5rem", padding: "2px 6px", background: "rgba(0,255,136,0.08)", border: "1px solid rgba(0,255,136,0.2)", color: "#00ff88" }}>
+                {p.installments}x SIN INTERÉS
+              </span>
+            )}
+            {p.free_shipping && (
+              <span style={{ fontFamily: "monospace", fontSize: "0.5rem", padding: "2px 6px", background: "rgba(0,212,255,0.08)", border: "1px solid rgba(0,212,255,0.2)", color: "#00d4ff" }}>
+                ✈ ENVÍO GRATIS
+              </span>
+            )}
           </div>
         </div>
       </div>
@@ -283,7 +300,18 @@ function ProductDetail({ product, onBack, onGoToStore }) {
                 <span style={{ width: 6, height: 6, borderRadius: "50%", background: "#00ff88", display: "inline-block" }} />
                 EN STOCK — disponible en {product.store_name}
               </div>
-            </div>
+              {product.installments > 1 && (
+                <div style={{ fontFamily: "monospace", fontSize: "0.6rem", color: "#00ff88", marginTop: 6, display: "flex", alignItems: "center", gap: 6 }}>
+                  <span style={{ width: 6, height: 6, borderRadius: "50%", background: "#00ff88", display: "inline-block" }} />
+                  {product.installments} CUOTAS SIN INTERÉS
+                </div>
+              )}
+              {product.free_shipping && (
+                <div style={{ fontFamily: "monospace", fontSize: "0.6rem", color: "#00d4ff", marginTop: 6, display: "flex", alignItems: "center", gap: 6 }}>
+                  <span style={{ width: 6, height: 6, borderRadius: "50%", background: "#00d4ff", display: "inline-block" }} />
+                  ENVÍO GRATIS
+                </div>
+              )}
 
             {/* Datos técnicos */}
             <div style={{ background: "#080f1a", border: "1px solid #1a2d4a", padding: 16 }}>
@@ -467,7 +495,7 @@ export default function App() {
     setLoading(true);
     Promise.all([
       sbFetch("/stores?is_active=eq.true&order=name"),
-      sbFetch("/products_with_store?stock_status=eq.in_stock&price_usd=not.is.null&order=last_synced_at.desc&limit=500"),
+      sbFetch("/products_with_store?stock_status=eq.in_stock&or=(price_usd.not.is.null,price_ars.not.is.null)&order=last_synced_at.desc&limit=500"),
       sbFetch("/classifieds?status=eq.active&order=created_at.desc"),
     ])
       .then(([s, p, c]) => {
