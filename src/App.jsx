@@ -312,6 +312,7 @@ function ProductDetail({ product, onBack, onGoToStore }) {
                   ENVÍO GRATIS
                 </div>
               )}
+            </div>
 
             {/* Datos técnicos */}
             <div style={{ background: "#080f1a", border: "1px solid #1a2d4a", padding: 16 }}>
