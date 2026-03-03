@@ -495,7 +495,7 @@ export default function App() {
     setLoading(true);
     Promise.all([
       sbFetch("/stores?is_active=eq.true&order=name"),
-      sbFetch("/products_with_store?stock_status=eq.in_stock&or=(price_usd.not.is.null,price_ars.not.is.null)&order=last_synced_at.desc&limit=500"),
+      sbFetch("/products_with_store?stock_status=eq.in_stock&order=last_synced_at.desc&limit=500"),
       sbFetch("/classifieds?status=eq.active&order=created_at.desc"),
     ])
       .then(([s, p, c]) => {
