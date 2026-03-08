@@ -234,18 +234,6 @@ function ProductDetail({ product, onBack, onGoToStore }) {
               )}
             </div>
 
-            {/* Precio historial */}
-            {priceHistory.length > 1 && (
-              <div style={{ marginTop: 16, background: "#0b1420", border: "1px solid #1a2d4a", padding: 16 }}>
-                <div style={{ fontFamily: "monospace", fontSize: "0.55rem", letterSpacing: 2, color: "#4a6080", marginBottom: 10 }}>HISTORIAL DE PRECIOS</div>
-                {priceHistory.slice(0, 5).map((h, i) => (
-                  <div key={i} style={{ display: "flex", justifyContent: "space-between", fontFamily: "monospace", fontSize: "0.65rem", padding: "5px 0", borderBottom: i < 4 ? "1px solid #1a2d4a" : "none" }}>
-                    <span style={{ color: "#4a6080" }}>{new Date(h.recorded_at).toLocaleDateString("es-AR")}</span>
-                    <span style={{ color: "#00d4ff" }}>{h.price_usd ? fmtUSD(h.price_usd) : fmtARS(h.price_ars)}</span>
-                  </div>
-                ))}
-              </div>
-            )}
           </div>
 
           {/* Columna derecha — info */}
@@ -269,9 +257,6 @@ function ProductDetail({ product, onBack, onGoToStore }) {
               <h1 style={{ fontFamily: "'Courier New', monospace", fontWeight: 700, fontSize: "1.3rem", color: "#fff", lineHeight: 1.3, margin: 0 }}>
                 {product.name}
               </h1>
-              <div style={{ fontFamily: "monospace", fontSize: "0.6rem", color: "#4a6080", letterSpacing: 2, marginTop: 6, textTransform: "uppercase" }}>
-                {product.category_slug}
-              </div>
             </div>
 
             {/* Precio */}
@@ -326,10 +311,8 @@ function ProductDetail({ product, onBack, onGoToStore }) {
               <div style={{ fontFamily: "monospace", fontSize: "0.55rem", letterSpacing: 2, color: "#4a6080", marginBottom: 12 }}>INFORMACIÓN</div>
               <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
                 {[
-                  ["Categoría", product.category_slug],
                   ["Tienda", product.store_name],
                   ["Ciudad", product.store_city || "Argentina"],
-                  ["Fuente", "Datos scrapeados en tiempo real"],
                 ].map(([k, v]) => v && (
                   <div key={k} style={{ display: "flex", justifyContent: "space-between", fontFamily: "monospace", fontSize: "0.65rem", borderBottom: "1px solid #0d1a2e", paddingBottom: 6 }}>
                     <span style={{ color: "#4a6080" }}>{k}</span>
