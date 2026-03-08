@@ -287,9 +287,16 @@ function ProductDetail({ product, onBack, onGoToStore }) {
                 </div>
               )}
               {product.price_ars && !product.price_usd && (
-                <div style={{ fontFamily: "monospace", fontWeight: 900, fontSize: "2rem", color: "#00ff88" }}>
-                  {fmtARS(product.price_ars)}
-                </div>
+                <>
+                  {isOnSale && product.sale_price_ars && (
+                    <div style={{ fontFamily: "monospace", fontSize: "0.85rem", color: "#444", textDecoration: "line-through", marginBottom: 4 }}>
+                      Antes: {fmtARS(product.price_ars)}
+                    </div>
+                  )}
+                  <div style={{ fontFamily: "monospace", fontWeight: 900, fontSize: "2rem", color: "#00ff88" }}>
+                    {fmtARS(isOnSale && product.sale_price_ars ? product.sale_price_ars : product.price_ars)}
+                  </div>
+                </>
               )}
               {isOnSale && (
                 <div style={{ fontFamily: "monospace", fontSize: "0.6rem", color: "#ff6b00", marginTop: 6, letterSpacing: 1 }}>
