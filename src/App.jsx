@@ -738,7 +738,7 @@ export default function App() {
           {/* Logo */}
           <div style={{ display:"flex", alignItems:"center", gap:10, cursor:"pointer", flexShrink:0 }} onClick={() => { setTab("home"); setMobileMenuOpen(false); }}>
             <div style={{ width:34, height:34, borderRadius:9, background: C.primary, display:"flex", alignItems:"center", justifyContent:"center", fontSize:"1.1rem" }}>🛸</div>
-            <div>
+            <div className="logo-text">
               <div style={{ fontFamily:font, fontWeight:800, fontSize:"1.05rem", color: C.text, letterSpacing:"-0.3px", lineHeight:1.1 }}>
                 Dron<span style={{ color: C.primary }}>Hub</span> <span style={{ color: C.orange, fontSize:"0.65rem", fontWeight:700 }}>AR</span>
               </div>
@@ -1092,8 +1092,10 @@ export default function App() {
           /* Nav: hide tabs, show hamburger and keep search */
           .nav-tabs { display: none !important; }
           .hamburger { display: flex !important; }
-          /* Search bar shrinks so logo stays visible */
-          .nav-search { max-width: 180px !important; flex: 1 !important; }
+          /* Hide logo text, keep only icon */
+          .logo-text { display: none !important; }
+          /* Search bar expands to fill available space */
+          .nav-search { max-width: none !important; flex: 1 !important; }
 
           /* Sidebar: hidden by default, slide in as drawer */
           .sidebar-panel {
