@@ -742,7 +742,7 @@ export default function App() {
               <div style={{ fontFamily:font, fontWeight:800, fontSize:"1.05rem", color: C.text, letterSpacing:"-0.3px", lineHeight:1.1 }}>
                 Dron<span style={{ color: C.primary }}>Hub</span> <span style={{ color: C.orange, fontSize:"0.65rem", fontWeight:700 }}>AR</span>
               </div>
-              <div style={{ fontFamily:font, fontSize:"0.58rem", color: C.textLight, letterSpacing:0.5, lineHeight:1, display:"none" }} className="hide-mobile">Comparador de precios</div>
+              <div style={{ fontFamily:font, fontSize:"0.58rem", color: C.textLight, letterSpacing:0.5, lineHeight:1 }}>Comparador de precios</div>
             </div>
           </div>
 
@@ -760,7 +760,7 @@ export default function App() {
           </div>
 
           {/* Search bar — center, grows */}
-          <div className="nav-search" style={{ flex:1, position:"relative", maxWidth:360, margin:"0 auto" }}>
+          <div className="nav-search" style={{ flex:1, position:"relative", maxWidth:360 }}>
             <input
               value={search}
               onChange={e => { setSearch(e.target.value); if (tab !== "catalogo" && tab !== "clasificados") setTab("catalogo"); }}
@@ -1092,7 +1092,8 @@ export default function App() {
           /* Nav: hide tabs, show hamburger and keep search */
           .nav-tabs { display: none !important; }
           .hamburger { display: flex !important; }
-          .nav-search { max-width: none !important; }
+          /* Search bar shrinks so logo stays visible */
+          .nav-search { max-width: 180px !important; flex: 1 !important; }
 
           /* Sidebar: hidden by default, slide in as drawer */
           .sidebar-panel {
