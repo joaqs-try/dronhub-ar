@@ -211,7 +211,7 @@ function ProductDetail({ product, onBack }) {
       </div>
 
       <div style={{ maxWidth:1000, margin:"0 auto", padding:"40px 24px" }}>
-        <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:40, alignItems:"start" }}>
+        <div className="detail-grid" style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:40, alignItems:"start" }}>
 
           {/* Columna izquierda — imagen */}
           <div style={{ background:C.white, borderRadius:16, overflow:"hidden", border:`1px solid ${C.border}`, boxShadow:"0 2px 12px rgba(0,0,0,0.06)" }}>
@@ -674,6 +674,8 @@ export default function App() {
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [contactItem, setContactItem] = useState(null);
   const [showPublish, setShowPublish] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
 
   const catalogRef = useRef(null);
 
@@ -731,22 +733,23 @@ export default function App() {
 
       {/* ── NAV ── */}
       <nav style={{ position:"sticky", top:0, zIndex:100, background:"rgba(255,255,255,0.95)", borderBottom:`1px solid ${C.border}`, backdropFilter:"blur(20px)", boxShadow:"0 1px 8px rgba(0,0,0,0.06)" }}>
-        <div style={{ maxWidth:1200, margin:"0 auto", padding:"0 24px", display:"flex", alignItems:"center", justifyContent:"space-between", height:64, gap:16 }}>
+        <div style={{ maxWidth:1200, margin:"0 auto", padding:"0 16px", display:"flex", alignItems:"center", height:64, gap:12 }}>
+
           {/* Logo */}
-          <div style={{ display:"flex", alignItems:"center", gap:10, cursor:"pointer", flexShrink:0 }} onClick={() => setTab("home")}>
+          <div style={{ display:"flex", alignItems:"center", gap:10, cursor:"pointer", flexShrink:0 }} onClick={() => { setTab("home"); setMobileMenuOpen(false); }}>
             <div style={{ width:34, height:34, borderRadius:9, background: C.primary, display:"flex", alignItems:"center", justifyContent:"center", fontSize:"1.1rem" }}>🛸</div>
             <div>
               <div style={{ fontFamily:font, fontWeight:800, fontSize:"1.05rem", color: C.text, letterSpacing:"-0.3px", lineHeight:1.1 }}>
                 Dron<span style={{ color: C.primary }}>Hub</span> <span style={{ color: C.orange, fontSize:"0.65rem", fontWeight:700 }}>AR</span>
               </div>
-              <div style={{ fontFamily:font, fontSize:"0.58rem", color: C.textLight, letterSpacing:0.5, lineHeight:1 }}>Comparador de precios</div>
+              <div style={{ fontFamily:font, fontSize:"0.58rem", color: C.textLight, letterSpacing:0.5, lineHeight:1, display:"none" }} className="hide-mobile">Comparador de precios</div>
             </div>
           </div>
 
-          {/* Tabs */}
-          <div style={{ display:"flex", gap:2, alignItems:"center", flexWrap:"wrap" }}>
+          {/* Tabs — hidden on mobile */}
+          <div className="nav-tabs" style={{ display:"flex", gap:2, alignItems:"center" }}>
             {NAV_TABS.map(([key, label]) => (
-              <button key={key} onClick={() => { setTab(key); setSearch(""); }}
+              <button key={key} onClick={() => { setTab(key); setSearch(""); setMobileMenuOpen(false); }}
                 style={{ fontFamily:font, fontSize:"0.78rem", fontWeight: tab === key ? 600 : 500, padding:"6px 14px", background: tab === key ? "#EFF6FF" : "transparent", color: tab === key ? C.primary : C.textMid, border: tab === key ? `1px solid #BFDBFE` : "1px solid transparent", borderRadius:8, cursor:"pointer", transition:"all 0.15s", whiteSpace:"nowrap" }}
                 onMouseEnter={e => { if(tab !== key) e.currentTarget.style.background = C.bg; }}
                 onMouseLeave={e => { if(tab !== key) e.currentTarget.style.background = "transparent"; }}
@@ -755,7 +758,43 @@ export default function App() {
               </button>
             ))}
           </div>
+
+          {/* Search bar — center, grows */}
+          <div className="nav-search" style={{ flex:1, position:"relative", maxWidth:360, margin:"0 auto" }}>
+            <input
+              value={search}
+              onChange={e => { setSearch(e.target.value); if (tab !== "catalogo" && tab !== "clasificados") setTab("catalogo"); }}
+              placeholder="Buscar productos..."
+              style={{ width:"100%", fontFamily:font, fontSize:"0.82rem", padding:"8px 14px 8px 36px", border:`1.5px solid ${C.border}`, borderRadius:22, outline:"none", background: C.bg, color: C.text, boxSizing:"border-box", transition:"border-color 0.15s" }}
+              onFocus={e => e.target.style.borderColor = C.primary}
+              onBlur={e => e.target.style.borderColor = C.border}
+            />
+            <span style={{ position:"absolute", left:11, top:"50%", transform:"translateY(-50%)", fontSize:"0.85rem", color: C.textLight, pointerEvents:"none" }}>🔍</span>
+            {search && (
+              <button onClick={() => setSearch("")} style={{ position:"absolute", right:10, top:"50%", transform:"translateY(-50%)", background:"none", border:"none", cursor:"pointer", color: C.textLight, fontSize:"1rem", lineHeight:1, padding:0 }}>×</button>
+            )}
+          </div>
+
+          {/* Hamburger — visible on mobile only */}
+          <button className="hamburger" onClick={() => setMobileMenuOpen(o => !o)}
+            style={{ display:"none", background:"none", border:`1px solid ${C.border}`, borderRadius:8, padding:"7px 10px", cursor:"pointer", flexShrink:0, color: C.text, fontSize:"1.1rem" }}
+          >
+            {mobileMenuOpen ? "✕" : "☰"}
+          </button>
         </div>
+
+        {/* Mobile dropdown menu */}
+        {mobileMenuOpen && (
+          <div className="mobile-menu" style={{ background:C.white, borderTop:`1px solid ${C.border}`, padding:"8px 0 12px" }}>
+            {NAV_TABS.map(([key, label]) => (
+              <button key={key} onClick={() => { setTab(key); setSearch(""); setMobileMenuOpen(false); }}
+                style={{ width:"100%", fontFamily:font, fontSize:"0.92rem", fontWeight: tab === key ? 600 : 400, padding:"11px 20px", background: tab === key ? "#EFF6FF" : "transparent", color: tab === key ? C.primary : C.text, border:"none", cursor:"pointer", textAlign:"left", display:"block" }}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+        )}
       </nav>
 
       {/* ── HOME ── */}
@@ -819,23 +858,26 @@ export default function App() {
 
       {/* ── CATÁLOGO ── */}
       {tab === "catalogo" && (
-        <div ref={catalogRef} style={{ display:"flex", minHeight:"calc(100vh - 64px)" }}>
+        <div ref={catalogRef} style={{ display:"flex", minHeight:"calc(100vh - 64px)", position:"relative" }}>
 
-          {/* Sidebar */}
-          <div style={{ width:240, minWidth:240, background:C.white, borderRight:`1px solid ${C.border}`, position:"sticky", top:64, height:"calc(100vh - 64px)", overflowY:"auto", flexShrink:0 }}>
+          {/* Mobile filter overlay backdrop */}
+          {mobileFiltersOpen && (
+            <div onClick={() => setMobileFiltersOpen(false)}
+              style={{ position:"fixed", inset:0, background:"rgba(0,0,0,0.4)", zIndex:200, display:"none" }}
+              className="mobile-backdrop"
+            />
+          )}
+
+          {/* Sidebar — desktop sticky / mobile drawer */}
+          <div className={`sidebar-panel${mobileFiltersOpen ? " sidebar-open" : ""}`}
+            style={{ width:240, minWidth:240, background:C.white, borderRight:`1px solid ${C.border}`, position:"sticky", top:64, height:"calc(100vh - 64px)", overflowY:"auto", flexShrink:0 }}
+          >
             <div style={{ padding:20 }}>
 
-              {/* Búsqueda */}
-              <div style={{ marginBottom:24 }}>
-                <label style={{ fontFamily:font, fontSize:"0.68rem", fontWeight:600, color: C.textMid, textTransform:"uppercase", letterSpacing:1, display:"block", marginBottom:8 }}>Buscar</label>
-                <div style={{ position:"relative" }}>
-                  <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Nombre del producto..."
-                    style={{ width:"100%", fontFamily:font, fontSize:"0.82rem", padding:"9px 12px 9px 34px", border:`1px solid ${C.border}`, borderRadius:8, outline:"none", background: C.bg, color: C.text, boxSizing:"border-box" }}
-                    onFocus={e => e.target.style.borderColor = C.primary}
-                    onBlur={e => e.target.style.borderColor = C.border}
-                  />
-                  <span style={{ position:"absolute", left:10, top:"50%", transform:"translateY(-50%)", fontSize:"0.85rem", color: C.textLight }}>🔍</span>
-                </div>
+              {/* Mobile close */}
+              <div className="mobile-only" style={{ display:"none", justifyContent:"space-between", alignItems:"center", marginBottom:16 }}>
+                <span style={{ fontFamily:font, fontWeight:700, fontSize:"1rem", color: C.text }}>Filtros</span>
+                <button onClick={() => setMobileFiltersOpen(false)} style={{ background:"none", border:`1px solid ${C.border}`, borderRadius:6, padding:"4px 10px", cursor:"pointer", fontSize:"1rem", color: C.textMid }}>✕</button>
               </div>
 
               {/* Ordenar */}
@@ -857,7 +899,7 @@ export default function App() {
                   Todas
                 </div>
                 {stores.map(s => (
-                  <div key={s.slug} onClick={() => setStoreFilter(s.slug)} style={{ fontFamily:font, fontSize:"0.8rem", color: storeFilter === s.slug ? s.color : C.textMid, padding:"6px 0", cursor:"pointer", display:"flex", alignItems:"center", gap:8, fontWeight: storeFilter === s.slug ? 600 : 400 }}>
+                  <div key={s.slug} onClick={() => { setStoreFilter(s.slug); setMobileFiltersOpen(false); }} style={{ fontFamily:font, fontSize:"0.8rem", color: storeFilter === s.slug ? s.color : C.textMid, padding:"6px 0", cursor:"pointer", display:"flex", alignItems:"center", gap:8, fontWeight: storeFilter === s.slug ? 600 : 400 }}>
                     <div style={{ width:8, height:8, borderRadius:"50%", background: storeFilter === s.slug ? s.color : C.border }} />
                     {s.name}
                   </div>
@@ -872,7 +914,7 @@ export default function App() {
                   <span style={{ fontSize:"0.72rem", color: C.textLight }}>{products.length}</span>
                 </div>
                 {CATEGORIES.filter(c => countByCat[c.slug] > 0).map(c => (
-                  <div key={c.slug} onClick={() => setCatFilter(c.slug)} style={{ fontFamily:font, fontSize:"0.8rem", color: catFilter === c.slug ? C.orange : C.textMid, padding:"5px 0", cursor:"pointer", display:"flex", justifyContent:"space-between", alignItems:"center", fontWeight: catFilter === c.slug ? 600 : 400 }}>
+                  <div key={c.slug} onClick={() => { setCatFilter(c.slug); setMobileFiltersOpen(false); }} style={{ fontFamily:font, fontSize:"0.8rem", color: catFilter === c.slug ? C.orange : C.textMid, padding:"5px 0", cursor:"pointer", display:"flex", justifyContent:"space-between", alignItems:"center", fontWeight: catFilter === c.slug ? 600 : 400 }}>
                     <span style={{ display:"flex", alignItems:"center", gap:6 }}>
                       <span style={{ fontSize:"0.9rem" }}>{c.icon}</span> {c.name}
                     </span>
@@ -884,21 +926,29 @@ export default function App() {
           </div>
 
           {/* Contenido */}
-          <div style={{ flex:1, padding:"28px 24px", minWidth:0 }}>
+          <div style={{ flex:1, padding:"20px 20px", minWidth:0 }}>
             {/* Header */}
-            <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:20, flexWrap:"wrap", gap:10 }}>
-              <div>
-                <h2 style={{ fontFamily:font, fontWeight:700, fontSize:"1.2rem", color: C.text, margin:0 }}>
-                  {catFilter ? CATEGORIES.find(c => c.slug === catFilter)?.name || catFilter : "Todos los productos"}
-                  {storeFilter && <span style={{ color: C.textMid, fontSize:"0.95rem", fontWeight:400 }}> · {stores.find(s => s.slug === storeFilter)?.name}</span>}
-                </h2>
-                <div style={{ fontFamily:font, fontSize:"0.75rem", color: C.textMid, marginTop:3 }}>
-                  {loading ? "Cargando..." : `${filteredProducts.length} productos con stock`}
+            <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:16, flexWrap:"wrap", gap:10 }}>
+              <div style={{ display:"flex", alignItems:"center", gap:10, flexWrap:"wrap" }}>
+                {/* Mobile filter button */}
+                <button className="filter-btn-mobile" onClick={() => setMobileFiltersOpen(true)}
+                  style={{ display:"none", alignItems:"center", gap:6, fontFamily:font, fontSize:"0.8rem", fontWeight:600, padding:"7px 14px", background:C.white, border:`1px solid ${C.border}`, borderRadius:8, cursor:"pointer", color: C.text }}
+                >
+                  ⚙️ Filtros {(catFilter || storeFilter) ? "·" : ""} {catFilter ? CATEGORIES.find(c=>c.slug===catFilter)?.name : ""}{catFilter && storeFilter ? ", " : ""}{storeFilter ? stores.find(s=>s.slug===storeFilter)?.name : ""}
+                </button>
+                <div>
+                  <h2 style={{ fontFamily:font, fontWeight:700, fontSize:"1.15rem", color: C.text, margin:0 }}>
+                    {catFilter ? CATEGORIES.find(c => c.slug === catFilter)?.name || catFilter : "Todos los productos"}
+                    {storeFilter && <span style={{ color: C.textMid, fontSize:"0.9rem", fontWeight:400 }}> · {stores.find(s => s.slug === storeFilter)?.name}</span>}
+                  </h2>
+                  <div style={{ fontFamily:font, fontSize:"0.72rem", color: C.textMid, marginTop:2 }}>
+                    {loading ? "Cargando..." : `${filteredProducts.length} productos con stock`}
+                  </div>
                 </div>
               </div>
               {(catFilter || storeFilter || search) && (
                 <button onClick={() => { setCatFilter(""); setStoreFilter(""); setSearch(""); }}
-                  style={{ fontFamily:font, fontSize:"0.75rem", color: C.textMid, background:"none", border:`1px solid ${C.border}`, borderRadius:6, padding:"6px 12px", cursor:"pointer" }}>
+                  style={{ fontFamily:font, fontSize:"0.72rem", color: C.textMid, background:"none", border:`1px solid ${C.border}`, borderRadius:6, padding:"6px 12px", cursor:"pointer" }}>
                   × Limpiar filtros
                 </button>
               )}
@@ -916,7 +966,7 @@ export default function App() {
                 <div style={{ fontFamily:font }}>Sin resultados para este filtro.</div>
               </div>
             ) : (
-              <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fill, minmax(210px, 1fr))", gap:16 }}>
+              <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fill, minmax(200px, 1fr))", gap:14 }}>
                 {filteredProducts.map(p => <ProductCard key={p.id} p={p} onClick={setSelectedProduct} />)}
               </div>
             )}
@@ -1036,12 +1086,56 @@ export default function App() {
         ::-webkit-scrollbar-thumb { background: ${C.border}; border-radius: 3px; }
         ::-webkit-scrollbar-thumb:hover { background: ${C.textLight}; }
         input:focus, textarea:focus, select:focus { border-color: ${C.primary} !important; box-shadow: 0 0 0 3px rgba(37,99,235,0.1); }
+
+        /* ── RESPONSIVE ── */
         @media (max-width: 768px) {
-          nav > div { flex-wrap: wrap; height: auto !important; padding: 12px 16px !important; }
-          nav > div > div:last-child { width: 100%; overflow-x: auto; }
+          /* Nav: hide tabs, show hamburger and keep search */
+          .nav-tabs { display: none !important; }
+          .hamburger { display: flex !important; }
+          .nav-search { max-width: none !important; }
+
+          /* Sidebar: hidden by default, slide in as drawer */
+          .sidebar-panel {
+            position: fixed !important;
+            top: 0 !important;
+            left: -260px !important;
+            height: 100vh !important;
+            width: 260px !important;
+            z-index: 300;
+            transition: left 0.25s ease;
+            box-shadow: none;
+          }
+          .sidebar-panel.sidebar-open {
+            left: 0 !important;
+            box-shadow: 4px 0 24px rgba(0,0,0,0.15);
+          }
+          .mobile-backdrop { display: block !important; }
+          .mobile-only { display: flex !important; }
+          .filter-btn-mobile { display: flex !important; }
+
+          /* Product grid: 2 columns on mobile */
+          .sidebar-panel + div > div:last-child > div {
+            grid-template-columns: repeat(2, 1fr) !important;
+            gap: 10px !important;
+          }
+
+          /* Detail: single column */
+          .detail-grid { grid-template-columns: 1fr !important; }
+
+          /* Hero smaller */
+          .hero-content h1 { font-size: 1.9rem !important; }
+          .hero-stats { gap: 20px !important; }
+
+          /* Stats bar: 2x2 */
+          .stats-bar { flex-wrap: wrap; }
+          .stats-bar > div { border-right: none !important; border-bottom: 1px solid ${C.border}; width: 50%; padding: 16px 0 !important; }
         }
-        @media (max-width: 600px) {
-          .sidebar { display: none; }
+
+        @media (max-width: 480px) {
+          /* Product grid: 1 column on very small */
+          .sidebar-panel + div > div:last-child > div {
+            grid-template-columns: 1fr !important;
+          }
         }
       `}</style>
     </div>
