@@ -742,7 +742,6 @@ export default function App() {
               <div style={{ fontFamily:font, fontWeight:800, fontSize:"1.05rem", color: C.text, letterSpacing:"-0.3px", lineHeight:1.1 }}>
                 Dron<span style={{ color: C.primary }}>Hub</span> <span style={{ color: C.orange, fontSize:"0.65rem", fontWeight:700 }}>AR</span>
               </div>
-              <div style={{ fontFamily:font, fontSize:"0.58rem", color: C.textLight, letterSpacing:0.5, lineHeight:1 }}>Comparador de precios</div>
             </div>
           </div>
 
