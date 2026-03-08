@@ -322,12 +322,14 @@ function ProductDetail({ product, onBack }) {
 }
 
 // ─── COMPONENTE: COMPARADOR ───────────────────────────────────────────────────
+const normalize = s => s ? s.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase() : "";
+
 function Comparador({ products }) {
   const [selected, setSelected] = useState([]);
   const [search, setSearch] = useState("");
 
   const drones = products.filter(p => p.category_slug === "drones" && (p.price_usd || p.price_ars));
-  const results = drones.filter(p => p.name.toLowerCase().includes(search.toLowerCase())).slice(0, 30);
+  const results = drones.filter(p => normalize(p.name).includes(normalize(search))).slice(0, 30);
 
   const toggle = (p) => {
     if (selected.find(s => s.id === p.id)) {
@@ -697,8 +699,8 @@ export default function App() {
 
   const filteredProducts = products
     .filter(p => {
-      const q = search.toLowerCase();
-      const matchSearch = !q || p.name?.toLowerCase().includes(q);
+      const q = normalize(search);
+      const matchSearch = !q || normalize(p.name).includes(q);
       const matchCat = !catFilter || p.category_slug === catFilter;
       const matchStore = !storeFilter || p.store_slug === storeFilter;
       return matchSearch && matchCat && matchStore;
@@ -706,12 +708,18 @@ export default function App() {
     .sort((a, b) => {
       if (sortBy === "price_asc") return ((a.sale_price_usd || a.price_usd || 0)) - ((b.sale_price_usd || b.price_usd || 0));
       if (sortBy === "price_desc") return ((b.sale_price_usd || b.price_usd || 0)) - ((a.sale_price_usd || a.price_usd || 0));
+      if (search) {
+        const q = normalize(search);
+        const aStarts = normalize(a.name).startsWith(q) ? 0 : 1;
+        const bStarts = normalize(b.name).startsWith(q) ? 0 : 1;
+        return aStarts - bStarts;
+      }
       return 0;
     });
 
   const filteredClassifieds = classifieds.filter(c => {
-    const q = search.toLowerCase();
-    return !q || c.title?.toLowerCase().includes(q) || c.description?.toLowerCase().includes(q);
+    const q = normalize(search);
+    return !q || normalize(c.title).includes(q) || normalize(c.description).includes(q);
   });
 
   const countByCat = {};
