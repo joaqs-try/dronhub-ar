@@ -599,7 +599,7 @@ function PublishModal({ onClose, onPublish }) {
 // ─── COMPONENTE: HERO ─────────────────────────────────────────────────────────
 function Hero({ onExplore }) {
   return (
-    <div style={{ position:"relative", height:"92vh", minHeight:500, overflow:"hidden", display:"flex", alignItems:"center", justifyContent:"center" }}>
+    <div style={{ position:"relative", height:600, overflow:"hidden", display:"flex", alignItems:"center", justifyContent:"center" }}>
       {/* Video background */}
       <video
         autoPlay muted loop playsInline
@@ -639,16 +639,6 @@ function Hero({ onExplore }) {
           </button>
         </div>
 
-        {/* Quick features */}
-        <div style={{ display:"flex", gap:32, justifyContent:"center", marginTop:56, flexWrap:"wrap" }}>
-          {[["📷","Hasta 8K","Resolución de cámara"],["📡","10 km","Alcance de transmisión"],["🔋","46 min","Autonomía máxima"]].map(([icon, val, label]) => (
-            <div key={label} style={{ textAlign:"center" }}>
-              <div style={{ fontSize:"1.5rem", marginBottom:4 }}>{icon}</div>
-              <div style={{ fontFamily:font, fontWeight:700, fontSize:"1.1rem", color:"#fff" }}>{val}</div>
-              <div style={{ fontFamily:font, fontSize:"0.72rem", color:"rgba(255,255,255,0.6)" }}>{label}</div>
-            </div>
-          ))}
-        </div>
       </div>
 
       {/* Scroll indicator */}
