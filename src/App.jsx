@@ -661,6 +661,7 @@ export default function App() {
   const [search, setSearch] = useState("");
   const [catFilter, setCatFilter] = useState("");
   const [storeFilter, setStoreFilter] = useState("");
+  const [conditionFilter, setConditionFilter] = useState("");
   const [sortBy, setSortBy] = useState("newest");
 
   const [selectedProduct, setSelectedProduct] = useState(null);
@@ -693,7 +694,8 @@ export default function App() {
       const matchSearch = !q || normalize(p.name).includes(q);
       const matchCat = !catFilter || p.category_slug === catFilter;
       const matchStore = !storeFilter || p.store_slug === storeFilter;
-      return matchSearch && matchCat && matchStore;
+      const matchCondition = !conditionFilter || p.condition === conditionFilter;
+      return matchSearch && matchCat && matchStore && matchCondition;
     })
     .sort((a, b) => {
       if (sortBy === "price_asc") return ((a.sale_price_usd || a.price_usd || 0)) - ((b.sale_price_usd || b.price_usd || 0));
@@ -724,7 +726,7 @@ export default function App() {
     return <ProductDetail product={selectedProduct} onBack={() => setSelectedProduct(null)} />;
   }
 
-  const NAV_TABS = [["home","Inicio"],["catalogo","Catálogo"],["comparador","Comparador"],["tiendas","Tiendas"],["clasificados","Clasificados"]];
+  const NAV_TABS = [["home","Inicio"],["catalogo","Productos"],["comparador","Comparador"],["tiendas","Tiendas"]];
 
   return (
     <div style={{ background: C.bg, minHeight:"100vh", fontFamily:font, color: C.text }}>
@@ -919,6 +921,17 @@ export default function App() {
                   </div>
                 ))}
               </div>
+
+              {/* Estado */}
+              <div style={{ marginTop:24 }}>
+                <label style={{ fontFamily:font, fontSize:"0.68rem", fontWeight:600, color: C.textMid, textTransform:"uppercase", letterSpacing:1, display:"block", marginBottom:8 }}>Estado</label>
+                {[["","Todos"],["nuevo","Nuevo"],["usado","Usado"]].map(([v, l]) => (
+                  <div key={v} onClick={() => { setConditionFilter(v); setMobileFiltersOpen(false); }} style={{ fontFamily:font, fontSize:"0.8rem", color: conditionFilter === v ? C.primary : C.textMid, padding:"6px 0", cursor:"pointer", display:"flex", alignItems:"center", gap:8, fontWeight: conditionFilter === v ? 600 : 400 }}>
+                    <div style={{ width:8, height:8, borderRadius:"50%", background: conditionFilter === v ? C.primary : C.border, flexShrink:0 }} />
+                    {l}
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
 
@@ -943,8 +956,8 @@ export default function App() {
                   </div>
                 </div>
               </div>
-              {(catFilter || storeFilter || search) && (
-                <button onClick={() => { setCatFilter(""); setStoreFilter(""); setSearch(""); }}
+              {(catFilter || storeFilter || conditionFilter || search) && (
+                <button onClick={() => { setCatFilter(""); setStoreFilter(""); setConditionFilter(""); setSearch(""); }}
                   style={{ fontFamily:font, fontSize:"0.72rem", color: C.textMid, background:"none", border:`1px solid ${C.border}`, borderRadius:6, padding:"6px 12px", cursor:"pointer" }}>
                   × Limpiar filtros
                 </button>
