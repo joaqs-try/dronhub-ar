@@ -69,8 +69,8 @@ const CATEGORIES = [
 const EMOJI_MAP = { drones:"🛸",radiocontroles:"🎮",motores:"⚙️",baterias:"🔋","video-fpv":"📡","camaras-fpv":"📷","camaras-deportivas":"🎥",frames:"🔧",helices:"🌀","gafas-fpv":"🥽",cargadores:"⚡",filtros:"🔲",transporte:"🎒",accesorios:"🔗" };
 
 const fmtARS = n => "$ " + Number(n).toLocaleString("es-AR", { maximumFractionDigits: 0 });
-const normalize = s => s ? s.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase() : "";
 const fmtUSD = n => "USD " + Number(n).toLocaleString("en-US", { maximumFractionDigits: 0 });
+const normalize = s => s ? s.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase() : "";
 const timeAgo = d => { const s = (Date.now() - new Date(d)) / 1000; if (s < 3600) return `hace ${Math.floor(s/60)}min`; if (s < 86400) return `hace ${Math.floor(s/3600)}h`; return `hace ${Math.floor(s/86400)}d`; };
 
 function getImage(p) {
@@ -614,11 +614,11 @@ export default function App() {
             ))}
           </div>
 
-          {/* Search bar — center, grows */}
+          {/* Search bar — center */}
           <div className="nav-search" style={{ flex:1, position:"relative", maxWidth:480 }}>
             <input
               value={search}
-              onChange={e => { setSearch(e.target.value); if (tab !== "catalogo" && tab !== "clasificados") setTab("catalogo"); }}
+              onChange={e => { setSearch(e.target.value); if (tab !== "catalogo") setTab("catalogo"); }}
               placeholder="Buscar productos..."
               style={{ width:"100%", fontFamily:font, fontSize:"0.82rem", padding:"8px 14px 8px 36px", border:`1.5px solid ${C.border}`, borderRadius:22, outline:"none", background: C.bg, color: C.text, boxSizing:"border-box", transition:"border-color 0.15s" }}
               onFocus={e => e.target.style.borderColor = C.primary}
@@ -630,26 +630,20 @@ export default function App() {
             )}
           </div>
 
-          {/* Actions — right side */}
+          {/* Actions — right */}
           <div className="nav-tabs" style={{ display:"flex", gap:8, alignItems:"center", flexShrink:0 }}>
             <button style={{ fontFamily:font, fontSize:"0.78rem", fontWeight:500, padding:"6px 14px", background:"transparent", color: C.textMid, border:"1px solid transparent", borderRadius:8, cursor:"pointer", transition:"all 0.15s", whiteSpace:"nowrap" }}
               onMouseEnter={e => e.currentTarget.style.background = C.bg}
               onMouseLeave={e => e.currentTarget.style.background = "transparent"}
-            >
-              Registrarme
-            </button>
+            >Registrarme</button>
             <button style={{ fontFamily:font, fontSize:"0.78rem", fontWeight:600, padding:"6px 14px", background: C.primary, color:"#fff", border:"none", borderRadius:8, cursor:"pointer", transition:"all 0.15s", whiteSpace:"nowrap" }}
               onMouseEnter={e => e.currentTarget.style.background = C.primaryHover}
               onMouseLeave={e => e.currentTarget.style.background = C.primary}
-            >
-              Ingresar
-            </button>
+            >Ingresar</button>
             <button style={{ background:"none", border:`1px solid ${C.border}`, borderRadius:8, padding:"6px 10px", cursor:"pointer", fontSize:"1.1rem", color: C.text, display:"flex", alignItems:"center", justifyContent:"center", transition:"all 0.15s" }}
               onMouseEnter={e => e.currentTarget.style.background = C.bg}
               onMouseLeave={e => e.currentTarget.style.background = "none"}
-            >
-              🛒
-            </button>
+            >🛒</button>
           </div>
 
           {/* Hamburger — visible on mobile only */}
@@ -751,6 +745,16 @@ export default function App() {
                 ))}
               </div>
 
+              {/* Estado */}
+              <div style={{ marginBottom:24 }}>
+                <label style={{ fontFamily:font, fontSize:"0.68rem", fontWeight:600, color: C.textMid, textTransform:"uppercase", letterSpacing:1, display:"block", marginBottom:8 }}>Estado</label>
+                {[["","Todos"],["nuevo","Nuevo"],["usado","Usado"]].map(([v, l]) => (
+                  <div key={v} onClick={() => { setConditionFilter(v); setMobileFiltersOpen(false); }} style={{ fontFamily:font, fontSize:"0.8rem", color: conditionFilter === v ? C.primary : C.textMid, padding:"6px 0", cursor:"pointer", display:"flex", alignItems:"center", gap:8, fontWeight: conditionFilter === v ? 600 : 400 }}>
+                    <div style={{ width:8, height:8, borderRadius:"50%", background: conditionFilter === v ? C.primary : C.border, flexShrink:0 }} />
+                    {l}
+                  </div>
+                ))}
+              </div>
               {/* Tiendas */}
               <div style={{ marginBottom:24 }}>
                 <label style={{ fontFamily:font, fontSize:"0.68rem", fontWeight:600, color: C.textMid, textTransform:"uppercase", letterSpacing:1, display:"block", marginBottom:8 }}>Tienda</label>
@@ -783,16 +787,6 @@ export default function App() {
                 ))}
               </div>
 
-              {/* Estado */}
-              <div style={{ marginTop:24 }}>
-                <label style={{ fontFamily:font, fontSize:"0.68rem", fontWeight:600, color: C.textMid, textTransform:"uppercase", letterSpacing:1, display:"block", marginBottom:8 }}>Estado</label>
-                {[["","Todos"],["nuevo","Nuevo"],["usado","Usado"]].map(([v, l]) => (
-                  <div key={v} onClick={() => { setConditionFilter(v); setMobileFiltersOpen(false); }} style={{ fontFamily:font, fontSize:"0.8rem", color: conditionFilter === v ? C.primary : C.textMid, padding:"6px 0", cursor:"pointer", display:"flex", alignItems:"center", gap:8, fontWeight: conditionFilter === v ? 600 : 400 }}>
-                    <div style={{ width:8, height:8, borderRadius:"50%", background: conditionFilter === v ? C.primary : C.border, flexShrink:0 }} />
-                    {l}
-                  </div>
-                ))}
-              </div>
             </div>
           </div>
 
@@ -845,7 +839,6 @@ export default function App() {
         </div>
       )}
 
-      {/* ── COMPARADOR ── */}
 
       {/* ── TIENDAS ── */}
       {tab === "tiendas" && (
