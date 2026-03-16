@@ -890,6 +890,16 @@ export default function App() {
                 ))}
               </div>
 
+              {/* Estado */}
+              <div style={{ marginBottom:24 }}>
+                <label style={{ fontFamily:font, fontSize:"0.68rem", fontWeight:600, color: C.textMid, textTransform:"uppercase", letterSpacing:1, display:"block", marginBottom:8 }}>Estado</label>
+                {[["","Todos"],["nuevo","Nuevo"],["usado","Usado"]].map(([v, l]) => (
+                  <div key={v} onClick={() => { setConditionFilter(v); setMobileFiltersOpen(false); }} style={{ fontFamily:font, fontSize:"0.8rem", color: conditionFilter === v ? C.primary : C.textMid, padding:"6px 0", cursor:"pointer", display:"flex", alignItems:"center", gap:8, fontWeight: conditionFilter === v ? 600 : 400 }}>
+                    <div style={{ width:8, height:8, borderRadius:"50%", background: conditionFilter === v ? C.primary : C.border, flexShrink:0 }} />
+                    {l}
+                  </div>
+                ))}
+              </div>
               {/* Tiendas */}
               <div style={{ marginBottom:24 }}>
                 <label style={{ fontFamily:font, fontSize:"0.68rem", fontWeight:600, color: C.textMid, textTransform:"uppercase", letterSpacing:1, display:"block", marginBottom:8 }}>Tienda</label>
@@ -922,16 +932,6 @@ export default function App() {
                 ))}
               </div>
 
-              {/* Estado */}
-              <div style={{ marginTop:24 }}>
-                <label style={{ fontFamily:font, fontSize:"0.68rem", fontWeight:600, color: C.textMid, textTransform:"uppercase", letterSpacing:1, display:"block", marginBottom:8 }}>Estado</label>
-                {[["","Todos"],["nuevo","Nuevo"],["usado","Usado"]].map(([v, l]) => (
-                  <div key={v} onClick={() => { setConditionFilter(v); setMobileFiltersOpen(false); }} style={{ fontFamily:font, fontSize:"0.8rem", color: conditionFilter === v ? C.primary : C.textMid, padding:"6px 0", cursor:"pointer", display:"flex", alignItems:"center", gap:8, fontWeight: conditionFilter === v ? 600 : 400 }}>
-                    <div style={{ width:8, height:8, borderRadius:"50%", background: conditionFilter === v ? C.primary : C.border, flexShrink:0 }} />
-                    {l}
-                  </div>
-                ))}
-              </div>
             </div>
           </div>
 
