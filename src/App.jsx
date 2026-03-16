@@ -321,151 +321,6 @@ function ProductDetail({ product, onBack }) {
   );
 }
 
-// ─── COMPONENTE: COMPARADOR ───────────────────────────────────────────────────
-const normalize = s => s ? s.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase() : "";
-
-function Comparador({ products }) {
-  const [selected, setSelected] = useState([]);
-  const [search, setSearch] = useState("");
-
-  const drones = products.filter(p => p.category_slug === "drones" && (p.price_usd || p.price_ars));
-  const results = drones.filter(p => normalize(p.name).includes(normalize(search))).slice(0, 30);
-
-  const toggle = (p) => {
-    if (selected.find(s => s.id === p.id)) {
-      setSelected(selected.filter(s => s.id !== p.id));
-    } else if (selected.length < 3) {
-      setSelected([...selected, p]);
-    }
-  };
-
-  const specs = [
-    { key: "price", label: "Precio", render: p => p.price_usd ? fmtUSD(p.sale_price_usd || p.price_usd) : fmtARS(p.sale_price_ars || p.price_ars) },
-    { key: "store", label: "Tienda", render: p => p.store_name },
-    { key: "stock", label: "Stock", render: () => "✓ En stock" },
-    { key: "shipping", label: "Envío gratis", render: p => p.free_shipping ? "✓ Sí" : "—" },
-    { key: "installments", label: "Cuotas s/i", render: p => p.installments > 1 ? `${p.installments}x` : "—" },
-  ];
-
-  return (
-    <div style={{ padding:"40px 24px", maxWidth:1100, margin:"0 auto", fontFamily:font }}>
-      <div style={{ marginBottom:32 }}>
-        <h2 style={{ fontFamily:font, fontWeight:700, fontSize:"1.8rem", color: C.text, margin:"0 0 6px" }}>Comparador de drones</h2>
-        <p style={{ fontFamily:font, fontSize:"0.9rem", color: C.textMid, margin:0 }}>Seleccioná hasta 3 drones para comparar lado a lado</p>
-      </div>
-
-      {/* Búsqueda */}
-      <div style={{ position:"relative", marginBottom:20 }}>
-        <input
-          value={search}
-          onChange={e => setSearch(e.target.value)}
-          placeholder="Buscar drone para agregar..."
-          style={{ width:"100%", fontFamily:font, fontSize:"0.9rem", padding:"12px 16px 12px 44px", border:`1px solid ${C.border}`, borderRadius:10, outline:"none", background:C.white, color: C.text, boxSizing:"border-box" }}
-          onFocus={e => e.target.style.borderColor = C.primary}
-          onBlur={e => e.target.style.borderColor = C.border}
-        />
-        <span style={{ position:"absolute", left:14, top:"50%", transform:"translateY(-50%)", color: C.textMid }}>🔍</span>
-      </div>
-
-      {/* Lista de resultados */}
-      {search && results.length > 0 && (
-        <div style={{ background:C.white, border:`1px solid ${C.border}`, borderRadius:10, marginBottom:24, boxShadow: C.shadow, maxHeight:280, overflowY:"auto" }}>
-          {results.map(p => {
-            const inComp = !!selected.find(s => s.id === p.id);
-            return (
-              <div key={p.id} onClick={() => toggle(p)} style={{ display:"flex", alignItems:"center", gap:12, padding:"10px 16px", borderBottom:`1px solid ${C.border}`, cursor:selected.length >= 3 && !inComp ? "not-allowed" : "pointer", background: inComp ? "#EFF6FF" : "transparent", transition:"background 0.12s" }}
-                onMouseEnter={e => { if (!inComp) e.currentTarget.style.background = C.bg; }}
-                onMouseLeave={e => { if (!inComp) e.currentTarget.style.background = "transparent"; }}
-              >
-                <div style={{ width:40, height:40, flexShrink:0, borderRadius:8, overflow:"hidden", background: C.bg, display:"flex", alignItems:"center", justifyContent:"center" }}>
-                  {getImage(p) ? <img src={getImage(p)} alt="" style={{ width:"100%", height:"100%", objectFit:"cover" }} /> : <span style={{ fontSize:"1.4rem" }}>🛸</span>}
-                </div>
-                <div style={{ flex:1, minWidth:0 }}>
-                  <div style={{ fontFamily:font, fontSize:"0.8rem", fontWeight:500, color: C.text, whiteSpace:"nowrap", overflow:"hidden", textOverflow:"ellipsis" }}>{p.name}</div>
-                  <div style={{ fontFamily:font, fontSize:"0.7rem", color: C.primary, fontWeight:600 }}>
-                    {p.price_usd ? fmtUSD(p.sale_price_usd || p.price_usd) : fmtARS(p.sale_price_ars || p.price_ars)}
-                  </div>
-                </div>
-                <div style={{ fontFamily:font, fontSize:"0.7rem", fontWeight:600, color: inComp ? C.orange : C.primary, flexShrink:0 }}>
-                  {inComp ? "✓ Agregado" : selected.length >= 3 ? "Máx 3" : "+ Agregar"}
-                </div>
-              </div>
-            );
-          })}
-        </div>
-      )}
-
-      {/* Chips seleccionados */}
-      {selected.length > 0 && (
-        <div style={{ display:"flex", gap:10, flexWrap:"wrap", marginBottom:28 }}>
-          {selected.map(p => (
-            <div key={p.id} style={{ display:"flex", alignItems:"center", gap:8, background: C.white, border:`1px solid ${C.primary}`, borderRadius:20, padding:"6px 14px" }}>
-              <span style={{ fontFamily:font, fontSize:"0.75rem", fontWeight:500, color: C.text }}>{p.name.slice(0,35)}{p.name.length>35?"…":""}</span>
-              <button onClick={() => toggle(p)} style={{ background:"none", border:"none", cursor:"pointer", color: C.textMid, fontSize:"1rem", lineHeight:1, padding:0 }}>×</button>
-            </div>
-          ))}
-          <button onClick={() => setSelected([])} style={{ fontFamily:font, fontSize:"0.72rem", color: C.textMid, background:"none", border:`1px solid ${C.border}`, borderRadius:20, padding:"6px 14px", cursor:"pointer" }}>
-            Limpiar
-          </button>
-        </div>
-      )}
-
-      {/* Tabla comparativa */}
-      {selected.length >= 2 ? (
-        <div style={{ background:C.white, borderRadius:16, border:`1px solid ${C.border}`, overflow:"hidden", boxShadow: C.shadow }}>
-          {/* Header con imágenes */}
-          <div style={{ display:"grid", gridTemplateColumns:`200px repeat(${selected.length}, 1fr)`, borderBottom:`2px solid ${C.border}` }}>
-            <div style={{ padding:20, background: C.bg }} />
-            {selected.map(p => (
-              <div key={p.id} style={{ padding:20, textAlign:"center", borderLeft:`1px solid ${C.border}`, background: C.white }}>
-                <div style={{ width:80, height:80, margin:"0 auto 10px", borderRadius:10, overflow:"hidden", background: C.bg, display:"flex", alignItems:"center", justifyContent:"center" }}>
-                  {getImage(p) ? <img src={getImage(p)} alt="" style={{ width:"100%", height:"100%", objectFit:"cover" }} /> : <span style={{ fontSize:"2.5rem" }}>🛸</span>}
-                </div>
-                <div style={{ fontFamily:font, fontSize:"0.78rem", fontWeight:600, color: C.text, lineHeight:1.3 }}>{p.name.slice(0,45)}{p.name.length>45?"…":""}</div>
-                <button onClick={() => toggle(p)} style={{ marginTop:8, fontFamily:font, fontSize:"0.65rem", color: C.textLight, background:"none", border:"none", cursor:"pointer" }}>Quitar</button>
-              </div>
-            ))}
-          </div>
-
-          {/* Filas */}
-          {specs.map((spec, i) => (
-            <div key={spec.key} style={{ display:"grid", gridTemplateColumns:`200px repeat(${selected.length}, 1fr)`, borderBottom: i < specs.length-1 ? `1px solid ${C.border}` : "none", background: i % 2 === 0 ? C.white : C.bg }}>
-              <div style={{ padding:"14px 20px", fontFamily:font, fontSize:"0.78rem", fontWeight:600, color: C.textMid, display:"flex", alignItems:"center" }}>{spec.label}</div>
-              {selected.map(p => (
-                <div key={p.id} style={{ padding:"14px 20px", fontFamily:font, fontSize:"0.82rem", color: spec.key === "price" ? C.primary : C.text, fontWeight: spec.key === "price" ? 700 : 400, textAlign:"center", borderLeft:`1px solid ${C.border}`, display:"flex", alignItems:"center", justifyContent:"center" }}>
-                  {spec.render(p)}
-                </div>
-              ))}
-            </div>
-          ))}
-
-          {/* CTAs */}
-          <div style={{ display:"grid", gridTemplateColumns:`200px repeat(${selected.length}, 1fr)`, borderTop:`2px solid ${C.border}`, background: C.bg }}>
-            <div style={{ padding:20 }} />
-            {selected.map(p => (
-              <div key={p.id} style={{ padding:16, borderLeft:`1px solid ${C.border}`, display:"flex", alignItems:"center", justifyContent:"center" }}>
-                <a href={p.product_url} target="_blank" rel="noopener noreferrer"
-                  style={{ fontFamily:font, fontSize:"0.75rem", fontWeight:700, padding:"10px 20px", background: C.primary, color:"#fff", textDecoration:"none", borderRadius:8, textAlign:"center", display:"inline-block", transition:"background 0.15s" }}
-                  onMouseEnter={e => e.currentTarget.style.background = C.primaryHover}
-                  onMouseLeave={e => e.currentTarget.style.background = C.primary}
-                >
-                  Ver en tienda →
-                </a>
-              </div>
-            ))}
-          </div>
-        </div>
-      ) : (
-        <div style={{ textAlign:"center", padding:"60px 20px", color: C.textMid, fontFamily:font }}>
-          <div style={{ fontSize:"3rem", marginBottom:12 }}>⚖️</div>
-          <div style={{ fontWeight:600, fontSize:"1rem", color: C.text, marginBottom:6 }}>Seleccioná al menos 2 drones</div>
-          <div style={{ fontSize:"0.85rem" }}>Buscá por nombre y agregá drones para comparar precios, tiendas y más.</div>
-        </div>
-      )}
-    </div>
-  );
-}
-
 // ─── COMPONENTE: TARJETA CLASIFICADO ─────────────────────────────────────────
 function ClassifiedCard({ item, onContact }) {
   const [hov, setHov] = useState(false);
@@ -726,7 +581,7 @@ export default function App() {
     return <ProductDetail product={selectedProduct} onBack={() => setSelectedProduct(null)} />;
   }
 
-  const NAV_TABS = [["home","Inicio"],["catalogo","Productos"],["comparador","Comparador"]];
+  const NAV_TABS = [["home","Inicio"],["catalogo","Productos"]];
 
   return (
     <div style={{ background: C.bg, minHeight:"100vh", fontFamily:font, color: C.text }}>
@@ -745,6 +600,19 @@ export default function App() {
             </div>
           </div>
 
+          {/* Nav links — Inicio, Productos */}
+          <div className="nav-tabs" style={{ display:"flex", gap:2, alignItems:"center", flexShrink:0 }}>
+            {NAV_TABS.map(([key, label]) => (
+              <button key={key} onClick={() => { setTab(key); setSearch(""); setMobileMenuOpen(false); }}
+                style={{ fontFamily:font, fontSize:"0.78rem", fontWeight: tab === key ? 600 : 500, padding:"6px 14px", background: tab === key ? "#EFF6FF" : "transparent", color: tab === key ? C.primary : C.textMid, border: tab === key ? `1px solid #BFDBFE` : "1px solid transparent", borderRadius:8, cursor:"pointer", transition:"all 0.15s", whiteSpace:"nowrap" }}
+                onMouseEnter={e => { if(tab !== key) e.currentTarget.style.background = C.bg; }}
+                onMouseLeave={e => { if(tab !== key) e.currentTarget.style.background = "transparent"; }}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+
           {/* Search bar — center, grows */}
           <div className="nav-search" style={{ flex:1, position:"relative", maxWidth:480 }}>
             <input
@@ -761,17 +629,26 @@ export default function App() {
             )}
           </div>
 
-          {/* Tabs — right side, hidden on mobile */}
-          <div className="nav-tabs" style={{ display:"flex", gap:2, alignItems:"center", flexShrink:0 }}>
-            {NAV_TABS.map(([key, label]) => (
-              <button key={key} onClick={() => { setTab(key); setSearch(""); setMobileMenuOpen(false); }}
-                style={{ fontFamily:font, fontSize:"0.78rem", fontWeight: tab === key ? 600 : 500, padding:"6px 14px", background: tab === key ? "#EFF6FF" : "transparent", color: tab === key ? C.primary : C.textMid, border: tab === key ? `1px solid #BFDBFE` : "1px solid transparent", borderRadius:8, cursor:"pointer", transition:"all 0.15s", whiteSpace:"nowrap" }}
-                onMouseEnter={e => { if(tab !== key) e.currentTarget.style.background = C.bg; }}
-                onMouseLeave={e => { if(tab !== key) e.currentTarget.style.background = "transparent"; }}
-              >
-                {label}
-              </button>
-            ))}
+          {/* Actions — right side */}
+          <div className="nav-tabs" style={{ display:"flex", gap:8, alignItems:"center", flexShrink:0 }}>
+            <button style={{ fontFamily:font, fontSize:"0.78rem", fontWeight:500, padding:"6px 14px", background:"transparent", color: C.textMid, border:"1px solid transparent", borderRadius:8, cursor:"pointer", transition:"all 0.15s", whiteSpace:"nowrap" }}
+              onMouseEnter={e => e.currentTarget.style.background = C.bg}
+              onMouseLeave={e => e.currentTarget.style.background = "transparent"}
+            >
+              Registrarme
+            </button>
+            <button style={{ fontFamily:font, fontSize:"0.78rem", fontWeight:600, padding:"6px 14px", background: C.primary, color:"#fff", border:"none", borderRadius:8, cursor:"pointer", transition:"all 0.15s", whiteSpace:"nowrap" }}
+              onMouseEnter={e => e.currentTarget.style.background = C.primaryHover}
+              onMouseLeave={e => e.currentTarget.style.background = C.primary}
+            >
+              Ingresar
+            </button>
+            <button style={{ background:"none", border:`1px solid ${C.border}`, borderRadius:8, padding:"6px 10px", cursor:"pointer", fontSize:"1.1rem", color: C.text, display:"flex", alignItems:"center", justifyContent:"center", transition:"all 0.15s" }}
+              onMouseEnter={e => e.currentTarget.style.background = C.bg}
+              onMouseLeave={e => e.currentTarget.style.background = "none"}
+            >
+              🛒
+            </button>
           </div>
 
           {/* Hamburger — visible on mobile only */}
@@ -836,23 +713,6 @@ export default function App() {
             </div>
           </div>
 
-          {/* CTA Comparador */}
-          <div style={{ background: C.primary, padding:"56px 24px" }}>
-            <div style={{ maxWidth:700, margin:"0 auto", textAlign:"center" }}>
-              <div style={{ fontSize:"2.5rem", marginBottom:16 }}>⚖️</div>
-              <h2 style={{ fontFamily:font, fontWeight:700, fontSize:"1.8rem", color:"#fff", margin:"0 0 12px" }}>¿No sabés qué drone elegir?</h2>
-              <p style={{ fontFamily:font, fontSize:"1rem", color:"rgba(255,255,255,0.8)", margin:"0 0 28px", lineHeight:1.7 }}>
-                Usá nuestro comparador para ver precios, disponibilidad y tiendas lado a lado.
-              </p>
-              <button onClick={() => setTab("comparador")} style={{ fontFamily:font, fontWeight:700, fontSize:"0.95rem", padding:"14px 32px", background:"#fff", color: C.primary, border:"none", borderRadius:10, cursor:"pointer", transition:"all 0.15s" }}
-                onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-2px)"; e.currentTarget.style.boxShadow = "0 8px 24px rgba(0,0,0,0.15)"; }}
-                onMouseLeave={e => { e.currentTarget.style.transform = "none"; e.currentTarget.style.boxShadow = "none"; }}
-              >
-                Comparar drones ahora →
-              </button>
-            </div>
-          </div>
-        </>
       )}
 
       {/* ── CATÁLOGO ── */}
@@ -985,7 +845,6 @@ export default function App() {
       )}
 
       {/* ── COMPARADOR ── */}
-      {tab === "comparador" && <Comparador products={products} />}
 
       {/* ── TIENDAS ── */}
       {tab === "tiendas" && (
