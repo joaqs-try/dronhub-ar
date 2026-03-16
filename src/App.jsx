@@ -69,6 +69,7 @@ const CATEGORIES = [
 const EMOJI_MAP = { drones:"🛸",radiocontroles:"🎮",motores:"⚙️",baterias:"🔋","video-fpv":"📡","camaras-fpv":"📷","camaras-deportivas":"🎥",frames:"🔧",helices:"🌀","gafas-fpv":"🥽",cargadores:"⚡",filtros:"🔲",transporte:"🎒",accesorios:"🔗" };
 
 const fmtARS = n => "$ " + Number(n).toLocaleString("es-AR", { maximumFractionDigits: 0 });
+const normalize = s => s ? s.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase() : "";
 const fmtUSD = n => "USD " + Number(n).toLocaleString("en-US", { maximumFractionDigits: 0 });
 const timeAgo = d => { const s = (Date.now() - new Date(d)) / 1000; if (s < 3600) return `hace ${Math.floor(s/60)}min`; if (s < 86400) return `hace ${Math.floor(s/3600)}h`; return `hace ${Math.floor(s/86400)}d`; };
 
