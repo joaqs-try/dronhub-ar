@@ -726,7 +726,7 @@ export default function App() {
     return <ProductDetail product={selectedProduct} onBack={() => setSelectedProduct(null)} />;
   }
 
-  const NAV_TABS = [["home","Inicio"],["catalogo","Productos"],["comparador","Comparador"],["tiendas","Tiendas"]];
+  const NAV_TABS = [["home","Inicio"],["catalogo","Productos"],["comparador","Comparador"]];
 
   return (
     <div style={{ background: C.bg, minHeight:"100vh", fontFamily:font, color: C.text }}>
@@ -745,21 +745,8 @@ export default function App() {
             </div>
           </div>
 
-          {/* Tabs — hidden on mobile */}
-          <div className="nav-tabs" style={{ display:"flex", gap:2, alignItems:"center" }}>
-            {NAV_TABS.map(([key, label]) => (
-              <button key={key} onClick={() => { setTab(key); setSearch(""); setMobileMenuOpen(false); }}
-                style={{ fontFamily:font, fontSize:"0.78rem", fontWeight: tab === key ? 600 : 500, padding:"6px 14px", background: tab === key ? "#EFF6FF" : "transparent", color: tab === key ? C.primary : C.textMid, border: tab === key ? `1px solid #BFDBFE` : "1px solid transparent", borderRadius:8, cursor:"pointer", transition:"all 0.15s", whiteSpace:"nowrap" }}
-                onMouseEnter={e => { if(tab !== key) e.currentTarget.style.background = C.bg; }}
-                onMouseLeave={e => { if(tab !== key) e.currentTarget.style.background = "transparent"; }}
-              >
-                {label}
-              </button>
-            ))}
-          </div>
-
           {/* Search bar — center, grows */}
-          <div className="nav-search" style={{ flex:1, position:"relative", maxWidth:360 }}>
+          <div className="nav-search" style={{ flex:1, position:"relative", maxWidth:480 }}>
             <input
               value={search}
               onChange={e => { setSearch(e.target.value); if (tab !== "catalogo" && tab !== "clasificados") setTab("catalogo"); }}
@@ -772,6 +759,19 @@ export default function App() {
             {search && (
               <button onClick={() => setSearch("")} style={{ position:"absolute", right:10, top:"50%", transform:"translateY(-50%)", background:"none", border:"none", cursor:"pointer", color: C.textLight, fontSize:"1rem", lineHeight:1, padding:0 }}>×</button>
             )}
+          </div>
+
+          {/* Tabs — right side, hidden on mobile */}
+          <div className="nav-tabs" style={{ display:"flex", gap:2, alignItems:"center", flexShrink:0 }}>
+            {NAV_TABS.map(([key, label]) => (
+              <button key={key} onClick={() => { setTab(key); setSearch(""); setMobileMenuOpen(false); }}
+                style={{ fontFamily:font, fontSize:"0.78rem", fontWeight: tab === key ? 600 : 500, padding:"6px 14px", background: tab === key ? "#EFF6FF" : "transparent", color: tab === key ? C.primary : C.textMid, border: tab === key ? `1px solid #BFDBFE` : "1px solid transparent", borderRadius:8, cursor:"pointer", transition:"all 0.15s", whiteSpace:"nowrap" }}
+                onMouseEnter={e => { if(tab !== key) e.currentTarget.style.background = C.bg; }}
+                onMouseLeave={e => { if(tab !== key) e.currentTarget.style.background = "transparent"; }}
+              >
+                {label}
+              </button>
+            ))}
           </div>
 
           {/* Hamburger — visible on mobile only */}
@@ -890,16 +890,6 @@ export default function App() {
                 ))}
               </div>
 
-              {/* Estado */}
-              <div style={{ marginBottom:24 }}>
-                <label style={{ fontFamily:font, fontSize:"0.68rem", fontWeight:600, color: C.textMid, textTransform:"uppercase", letterSpacing:1, display:"block", marginBottom:8 }}>Estado</label>
-                {[["","Todos"],["nuevo","Nuevo"],["usado","Usado"]].map(([v, l]) => (
-                  <div key={v} onClick={() => { setConditionFilter(v); setMobileFiltersOpen(false); }} style={{ fontFamily:font, fontSize:"0.8rem", color: conditionFilter === v ? C.primary : C.textMid, padding:"6px 0", cursor:"pointer", display:"flex", alignItems:"center", gap:8, fontWeight: conditionFilter === v ? 600 : 400 }}>
-                    <div style={{ width:8, height:8, borderRadius:"50%", background: conditionFilter === v ? C.primary : C.border, flexShrink:0 }} />
-                    {l}
-                  </div>
-                ))}
-              </div>
               {/* Tiendas */}
               <div style={{ marginBottom:24 }}>
                 <label style={{ fontFamily:font, fontSize:"0.68rem", fontWeight:600, color: C.textMid, textTransform:"uppercase", letterSpacing:1, display:"block", marginBottom:8 }}>Tienda</label>
@@ -932,6 +922,16 @@ export default function App() {
                 ))}
               </div>
 
+              {/* Estado */}
+              <div style={{ marginTop:24 }}>
+                <label style={{ fontFamily:font, fontSize:"0.68rem", fontWeight:600, color: C.textMid, textTransform:"uppercase", letterSpacing:1, display:"block", marginBottom:8 }}>Estado</label>
+                {[["","Todos"],["nuevo","Nuevo"],["usado","Usado"]].map(([v, l]) => (
+                  <div key={v} onClick={() => { setConditionFilter(v); setMobileFiltersOpen(false); }} style={{ fontFamily:font, fontSize:"0.8rem", color: conditionFilter === v ? C.primary : C.textMid, padding:"6px 0", cursor:"pointer", display:"flex", alignItems:"center", gap:8, fontWeight: conditionFilter === v ? 600 : 400 }}>
+                    <div style={{ width:8, height:8, borderRadius:"50%", background: conditionFilter === v ? C.primary : C.border, flexShrink:0 }} />
+                    {l}
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
 
