@@ -484,23 +484,10 @@ function Hero({ onExplore }) {
             onMouseEnter={e => { e.currentTarget.style.background = C.primaryHover; e.currentTarget.style.transform = "translateY(-2px)"; }}
             onMouseLeave={e => { e.currentTarget.style.background = C.primary; e.currentTarget.style.transform = "none"; }}
           >
-            Ver catálogo
-          </button>
-          <button onClick={onExplore}
-            style={{ fontFamily:font, fontWeight:600, fontSize:"0.95rem", padding:"14px 32px", background:"rgba(255,255,255,0.15)", color:"#fff", border:"1px solid rgba(255,255,255,0.4)", borderRadius:10, cursor:"pointer", backdropFilter:"blur(8px)", transition:"all 0.15s" }}
-            onMouseEnter={e => e.currentTarget.style.background = "rgba(255,255,255,0.25)"}
-            onMouseLeave={e => e.currentTarget.style.background = "rgba(255,255,255,0.15)"}
-          >
-            Ver comparativa
+            Ver productos
           </button>
         </div>
 
-      </div>
-
-      {/* Scroll indicator */}
-      <div style={{ position:"absolute", bottom:28, left:"50%", transform:"translateX(-50%)", zIndex:2, display:"flex", flexDirection:"column", alignItems:"center", gap:6, cursor:"pointer" }} onClick={onExplore}>
-        <span style={{ fontFamily:font, fontSize:"0.68rem", color:"rgba(255,255,255,0.5)", letterSpacing:2, textTransform:"uppercase" }}>Explorar</span>
-        <div style={{ width:1, height:32, background:"rgba(255,255,255,0.3)" }} />
       </div>
     </div>
   );
